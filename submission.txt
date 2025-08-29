@@ -2,7 +2,7 @@ Team number: AOHW25_416
 
 Project name: eBPF in the Shell: Deploying Kernel Logic on Reconfigurable Hardware
 
-Link to YouTube Video(s): https://youtu.be/3cQod6R8z30 
+Link to YouTube Video(s): https://youtu.be/wqgQj01QSpA 
 
 Link to project repository: https://github.com/ironmanna/AOHW25_416-eBPF-in-the-Shell-Deploying-Kernel-Logic-on-Reconfigurable-Hardware
 
@@ -113,4 +113,4 @@ Notes
 - Ensure correct bus and application names in the compilation scripts for the Custom_applications.
 - Adjust Vivado and synthesis settings for your board.
 - For more details, see 'README.md' and 'Custom_applications/README.md'.
-
+- For the latest upstream development, please visit https://github.com/system-fab/NanoNIC

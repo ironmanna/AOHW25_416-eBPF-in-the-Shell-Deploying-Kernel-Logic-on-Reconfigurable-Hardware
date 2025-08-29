@@ -223,3 +223,6 @@ This project builds on the following:
 - [AMD Nanotube](https://github.com/Xilinx/nanotube): A BPF-to-HDL compiler designed for hardware acceleration in networking applications.
 - [OpenNIC](https://github.com/Xilinx/open-nic): A framework for building programmable Network Interface Cards (NICs), enabling advanced packet processing.
 - [Xilinx Vivado](https://www.amd.com/en/products/software/adaptive-socs-and-fpgas/vivado.html): Development tools and platforms for implementing and testing FPGA-based designs.
+- [NanoNIC](https://github.com/system-fab/NanoNIC) : For the most up-to-date information on the NanoNIC project.
+
+Special thanks to Davide Conficconi and Gianni Antichi for their invaluable guidance and support throughout the project.
