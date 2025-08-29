@@ -1,0 +1,116 @@
+Team number: AOHW25_416
+
+Project name: eBPF in the Shell: Deploying Kernel Logic on Reconfigurable Hardware
+
+Link to YouTube Video(s): https://youtu.be/3cQod6R8z30 
+
+Link to project repository: https://github.com/ironmanna/AOHW25_416-eBPF-in-the-Shell-Deploying-Kernel-Logic-on-Reconfigurable-Hardware
+
+ 
+
+University name: Politecnico di Milano
+
+Participant: Simone Mannarino
+
+Email: simone.mannarino@mail.polimi.it
+
+Supervisor name: Davide Conficconi 
+
+Supervisor e-mail: davide.conficconi@polimi.it
+
+Co-Supervisor name: Gianni Antichi
+
+Co-Supervisor e-mail: gianni.antichi@polimi.it
+
+ 
+
+Board used: Alveo U250 and Alveo U55c
+
+Software Version: Vivado 2022.1
+
+Brief description of project: 
+
+This project explores the integration of eBPF (extended Berkeley Packet Filter) technology with reconfigurable hardware such as the Alveo U250 
+FPGAs. The goal is to enable the execution of kernel logic directly on hardware, improving performance and flexibility for network applications.
+This work demonstrates the practical deployment of eBPF programs on FPGA hardware. Although Nanotube (an eBPF-to-FPGA compiler) and OpenNIC (an 
+open source FPGA-based SmartNIC platform) were not originally compatible, this project bridges the gap between them. My main contribution was 
+the integration, customization, and validation of the toolchain, enabling seamless translation of high-level code into hardware-accelerated network 
+functions.
+
+Description of archive (explain directory structure, documents and source files):
+
+The repository is organized as follows:
+- bitstreams/: Pre-built FPGA bitstreams for supported boards.
+- Custom_applications/: Example eBPF applications and compilation scripts.
+- docs/: Diagrams and images illustrating the architecture, pipeline, and test setups.
+- nanotube/: Nanotube compiler source repository.
+- open-nic-dpdk/: OpenNIC DPDK source repository.
+- open-nic-driver/: OpenNIC driver source repository.
+- open-nic-shell/: OpenNIC shell source repository.
+- scripts/: Utility scripts for testing and automation.
+- README.md: Project documentation and instructions.
+- Other files and folders provide support for synthesis, simulation, and deployment on Alveo U250/U55c boards.
+
+Instructions to build and test project
+
+1. Clone the repository and submodules:
+	git submodule update --init --recursive
+
+2. Apply the Nanotube patch:
+	patch -d ./nanotube -p1 < nanotube.patch
+
+3. Build Nanotube compiler:
+	Follow the instructions in 'nanotube/README.md' to build the compiler.
+
+4. Prepare the OpenNIC shell:
+	./synth_open-nic_project.sh
+
+5. Compile custom eBPF applications:
+	- Copy the 'Custom_applications' folder into the Nanotube project directory (if not already present).
+	- Navigate to the desired application folder and run:
+	  ./compile.sh
+
+	- If required, follow instructions in Nanotube README to patch and use the Katran library.
+
+6. Perform HLS synthesis:
+	- Use the Nanotube script (example):
+	  nanotube/scripts/hls_build -j6 --clock 4.0 -p xcu250-figd2104-2L-e -- Custom_applications/<app_folder>/<output_hls_folder>/ HLS_build/<app_folder>/
+
+    - Or instead you can simply copy the 'scripts/launch_hls_build' inside the nanotube repository and run it.
+	- Adjust options as needed for your board and application.
+
+7. Integrate IPs into OpenNIC shell:
+	- Source generated IPs to the OpenNIC shell Vivado project inside the IP repository option in the settings.
+	- Add IPs to the block design and connect as described in the main README and 'vitis_opts.ini' (use the 
+      helper script 'scripts/get_connections.py' to automate TCL connections).
+	- Make unconnected ports external and connect clock/reset signals.
+
+8. Generate the bitstream:
+	- Press "Generate Bitstream" in Vivado.
+    - If you encounter any issue, please refer to the 'README.md' file for more informations.
+	- Alternatively, use pre-built bitstreams from the 'bitstreams/' folder.
+
+9. Hardware Testing:
+    - Connect boards via QSFP cable.
+    - Compile the open-nic-driver kernel module by following the instructions inside the repository.
+    - Load the generated or pre-built bitstream to the FPGA. Then reboot and load the driver by running:
+      sudo insmod onic.ko
+
+    - Now you need a machine acting like a traffic generator, that's why there is also an U55c. Load the traffic generator bitstream. Compile the
+      DPDK support by following the instructions inside open-nic-dpdk repository. Then use the provided 'scripts/setup_and_run_DPDK.sh' to 
+      configure and run DPDK on the board.
+
+    - On the receiver machine, execute:
+      dmesg
+
+      To view the name of the network interface registred by the open-nic-driver and then run:
+      sudo tcpdump -i <interface_name> -xx
+
+      To see the network packets received from the interface.
+    - For troubleshooting, refer to the main README and log files.
+
+Notes
+- Ensure correct bus and application names in the compilation scripts for the Custom_applications.
+- Adjust Vivado and synthesis settings for your board.
+- For more details, see 'README.md' and 'Custom_applications/README.md'.
+
